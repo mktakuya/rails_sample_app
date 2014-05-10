@@ -13,6 +13,9 @@ describe "Authentication" do
   describe "signin" do
     before { visit signin_path }
 
+    it { should_not have_link('Profile') }
+    it { should_not have_link('Settings') }
+
     describe "with invalid information" do
       before { click_button "Sign in" }
 
@@ -28,6 +31,7 @@ describe "Authentication" do
 
     describe "with valid information" do
       let(:user) { FactoryGirl.create(:user) }
+      #before { sign_in(user, no_capybara: true) }
       before do
         fill_in "Email", with: user.email.upcase
         fill_in "Password", with: user.password
