@@ -58,10 +58,19 @@ describe "User Pages" do
 
   describe "profile page" do
     let(:user) { FactoryGirl.create(:user) }
+    let!(:m1) { FactoryGirl.create(:micropost, user: user, content: "Foo") }
+    let!(:m2) { FactoryGirl.create(:micropost, user: user, content: "Bar") }
+
     before { visit user_path(user) }
 
     it { should have_content(user.name) }
     it { should have_title(user.name) }
+
+    describe "microposts" do
+      it { should have_content(m1.content) }
+      it { should have_content(m2.content) }
+      it { should have_content(user.microposts.count) }
+    end
   end
 
   describe "signup" do
@@ -83,11 +92,20 @@ describe "User Pages" do
         it { should have_link('change', href: 'http://gravatar.com/emails') }
       end
 
+=begin
       describe "with invalid information" do
         before { click_button "Save changes" }
 
         it { should have_content('error') }
+
+        describe "after submission" do
+          before { click_button submit }
+
+          it { should have_title('Sign up') }
+          it { should have_content('error') }
+        end
       end
+=end
 
       describe "with valid information" do
         let(:new_name) { "New Name" }
@@ -104,6 +122,15 @@ describe "User Pages" do
         it { should have_link('Sign out', href: signout_path) }
         specify { expect(user.reload.name).to eq new_name }
         specify { expect(user.reload.email).to eq new_email }
+=begin
+        describe "after saving the user" do
+          before { click_button submit }
+          let(:user) { User.find_by(email: 'user@example.com') }
+
+          it { should have_title(user.name) }
+          it { should have_selector('div.alert.alert-success', text: 'Welcome') }
+        end
+=end
 
         describe "forbidden attributes" do
           let(:params) do
