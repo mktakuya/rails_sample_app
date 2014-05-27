@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140511061544) do
+ActiveRecord::Schema.define(version: 20140527152006) do
+
+  create_table "comments", force: true do |t|
+    t.integer  "micropost_id"
+    t.integer  "user_id"
+    t.string   "content"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "user_name"
+  end
+
+  add_index "comments", ["user_id", "created_at"], name: "index_comments_on_user_id_and_created_at"
 
   create_table "microposts", force: true do |t|
     t.string   "content"

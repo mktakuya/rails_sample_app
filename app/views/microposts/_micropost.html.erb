@@ -1,11 +1,34 @@
 <li>
-  <span class="content"><%= micropost.content %></span>
-  <span class="timestamp">
-    Posted <%= time_ago_in_words(micropost.created_at) %> ago.
-  </span>
-  <% if current_user?(micropost.user) %>
-    <%= link_to "delete", micropost, method: :delete,
-      data: { confirm: "You sure?" },
-      title: micropost.content %>
+  <div class="micropost well">
+    <span class="content"><%= micropost.content %></span>
+    <span class="timestamp">
+      Posted <%= time_ago_in_words(micropost.created_at) %> ago.
+    </span>
+    <% if current_user?(micropost.user) %>
+      <%= link_to "delete", micropost, method: :delete,
+        data: { confirm: "You sure?" },
+        title: micropost.content %>
+    <% end %>
+  </div>
+
+  <% if micropost.comments.any? %>
+    <% micropost.comments.each do |comment| %>
+      <div class="comments">
+        <span class="user">
+          <%= link_to comment.user_name %>
+        </span>
+        <span class="content"><%= comment.content %></span>
+        <span class="timestamp">
+          Posted <%= time_ago_in_words(comment.created_at) %> ago.
+        </span>
+        <% if current_user_id?(comment.user_id) %>
+          <%= link_to "delete", comment, method: :delete,
+            :comment_id => comment.id.to_i,
+            data: {confirm: "You sure?" },
+            title: comment.content %>
+        <% end %>
+      </div>
+    <% end %>
   <% end %>
+  <%= render partial: 'shared/comment_form', locals: {micropost_id: micropost.id, user_id: current_user.id }%>
 </li>
